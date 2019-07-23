@@ -1,13 +1,13 @@
 ## FP.1 Match 3D Objects
 
-loop all the bounding boxes in previous frame
-    loop all the matches 
-        check if match.previous_keypoint inside the previous bounding box
-            get the corresponding current_keypoint
-            loop all the bounding boxes in current frame 
-                check if the currrent_keypoint inside the current bounding box
-                    if inside, count the number of match pair :(prevbox, currbox)
-    find the max matches box in current frame, restore the bounding box pair in the result map.
+    loop all the bounding boxes in previous frame
+        loop all the matches 
+            check if match.previous_keypoint inside the previous bounding box
+                get the corresponding current_keypoint
+                loop all the bounding boxes in current frame 
+                    check if the currrent_keypoint inside the current bounding box
+                        if inside, count the number of match pair :(prevbox, currbox)
+        find the max matches box in current frame, restore the bounding box pair in the result map.
 
 
 ## FP.2 Compute Lidar-based TTC
@@ -31,26 +31,26 @@ Note: if the relative velocity_x is negative, the TTC should be maximum.
 
 ## FP.3 Associate Keypoint Correspondences with Bounding Boxes
 
-loop all the matches
-    check if the matches.keypoint inside the bounding box
-    if inside, add it to the vector
+    loop all the matches
+        check if the matches.keypoint inside the bounding box
+        if inside, add it to the vector
 
-compute the mean of matches euclidean distance.
-loop all the matches inside the vector
-    compute the euclidean distance between the matches (previous keypoint and current keypoint)
-    if the abs(mean-distance) > threshold (for example. 300)
-        then remove this match. Because it's obviously wrong.
+    compute the mean of matches euclidean distance.
+    loop all the matches inside the vector
+        compute the euclidean distance between the matches (previous keypoint and current keypoint)
+        if the abs(mean-distance) > threshold (for example. 300)
+            then remove this match. Because it's obviously wrong.
 
 
 ## FP.4 Compute Camera-based TTC
 
-out_loop each matches
-    in_loop each matches
-        compute the distance ratio for each match pair 
-        save the distance ratio in a vector
+    out_loop each matches
+        in_loop each matches
+            compute the distance ratio for each match pair 
+            save the distance ratio in a vector
 
-sort the distance ratio vector, find the median value of distance ratio.
-use the median distance ratio to compute the TTC.
+    sort the distance ratio vector, find the median value of distance ratio.
+    use the median distance ratio to compute the TTC.
 
 # Performance Evaluation
 
