@@ -60,7 +60,7 @@ In the future, we may change to constant acceleration model, and use more frames
 
 ## FP.5 Performance Evaluation 1 _Lidar TTC Compute
 
-For TTC estimation, I think there will be two aspects can influence the performance:
+For TTC estimation, I think there will be two aspects can influence the estimation performance (ignore time used):
 3.1 TTC computation estimation model (constant velocity, or constant acceleration)
 3.2 The distance estimation of object (with lidar measurement)
 
@@ -74,7 +74,7 @@ For lidar points, I think the main error may come in two ways:
   It means lidar points of object1 match to object2.
   This problem is very common. Because now we use Yolov3 to get the object rectangle from the image.
   But the detection is not so precise. The object in real world may have a lot of shape, but in here we use rectangle to represent it.
-  We can use semantic segmentation to get more precise object boundary.
+  In the future, we can use semantic segmentation to get more precise object boundary.
 
 - There is no object, but some points come.
   I think in real world, this problem may rise in sometime. Because we measure the lidar points by the light reflection. But for some object have big or small reflection feature, especially the mirror and water, there will be some ghost lidar points.
@@ -105,7 +105,7 @@ Here i will mark some problems I found in the test:
    For this error, i guess it may cause by the lidar depth resolution or some lidar physical issue.
 
 4. In some cases, the TTC compute will be very strange: the x-distance of previous frame will be very large. 
-After checking the log, the reason is mismatch of bounding box. The bounding box has been match to another box in this case.But in most cases, the matching works well. See combination(SIFT, BRISK)
+After checking the log, the reason is mismatch of bounding boxes. The bounding box has been match to another wrong box.But in most cases, the matching works well. See combination(SIFT, BRISK)
 
 
 
@@ -115,7 +115,7 @@ After checking the log, the reason is mismatch of bounding box. The bounding box
 For Camera-based TTC estimation, i make the test of some combination and list some precise performance in the following table.
 I find the suitable combination is very hard to choose. If we ignore the process time, the SIFT-detector will have good performance. But it will take more than 120ms. It is unacceptable. Since the image come every 100ms, we also have a lot of other job to perform, i think the time used for detector and descriptor must be less than 10ms. So i think only FAST can match our requirement. But FAST TTC estimation performance is not so good. Finally, I choose FAST+BRISK.
 
-In the following table, i make the test TTC estimation performance by score (min:1 , max:3). (ignore time used)
+In the following table, i make the test TTC estimation performance by score (min:1 , max:3). (ignore time used, time-used can be found in mid-term-project)
 
 
 |col:detector<br/>row:descriptor | SHITOMASI | FAST | BRISK | ORB | AKAZE | SIFT |
@@ -128,7 +128,7 @@ AKAZE|_|_|_|_|2|_
 SIFT|2|2|1|1|2|3
 
 
-1. I find the performance of camera based TTC estimation is very unstable. Depends on the combinations of detectors and descriptors, the performance change large. 
+1. I find the performance of camera based TTC estimation is very unstable. Depends on the combinations of detectors and descriptors, the performance change large. I think the reason is : the different detector and descriptor is suitable for different scenario. Maybe in real world, we should implement a lots of combination and test them in each situation. According to the currrent situation, choose the right one.
 
 2. For one combination of the detector and descriptors, the TTC estimation may also change very fast from time to time. I think it may caused by the lightness/intensity change, or the object change in image (scale/rotation/affine transformation).
 
