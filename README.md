@@ -118,8 +118,8 @@ I find the suitable combination is very hard to choose. If we ignore the process
 In the following table, i make the test TTC estimation performance by score (min:1 , max:3). (ignore time used)
 
 
-|col:detector<br/>row:descriptor | SHITOMASI | HARRIS | FAST | BRISK | ORB | AKAZE | SIFT |
-|-|-|-|-|-|-|-|-|
+|col:detector<br/>row:descriptor | SHITOMASI | FAST | BRISK | ORB | AKAZE | SIFT |
+|-|-|-|-|-|-|-|
 BRISK|2|2|2|1|2|3
 BRIEF|2|2|2|1|2|3
 ORB|2|2|2|1|2|_
@@ -130,9 +130,9 @@ SIFT|2|2|1|1|2|3
 
 1. I find the performance of camera based TTC estimation is very unstable. Depends on the combinations of detectors and descriptors, the performance change large. 
 
-For one combination of the detector and descriptors, the TTC estimation may also change very fast from time to time. I think it may caused by the lightness/intensity change, or the object change in image (scale/rotation/affine transformation).
+2. For one combination of the detector and descriptors, the TTC estimation may also change very fast from time to time. I think it may caused by the lightness/intensity change, or the object change in image (scale/rotation/affine transformation).
 
-2. For camera TTC estimation, it can only compute the relative change in image. It can not measure the distance of the object. The TTC computation result is not stable.
+3. For camera TTC estimation, it can only compute the relative change in image. It can not measure the distance of the object. The TTC computation result is not stable.
 Especially when the image change very fast, the TTC computation is not stable.
 The reason maybe the matching between two images is hard, when the image change a lot. So the estimation is not good.
 
