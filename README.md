@@ -8,26 +8,42 @@
                     check if the currrent_keypoint inside the current bounding box
                         if inside, count the number of match pair :(prevbox, currbox)
         find the max matches box in current frame, restore the bounding box pair in the result map.
+    
+    Note: in order to make the result stable, I make three steps :
+    1. when I compute the max match box, I wil also try to compute the ratio = prev_box_size/ curr_box_size. If the ratio is less than threshold, it means the box size change to much in those two frame, it should be something wrong. I will filter this match box out.
+    2. Besides the size of box, I will also compare the center position of the box, if the box position change too large (the euclidean distance is large than 100), I will also filter this box out.
+    3. If the matches points number of two boxes is less than 5, I will filter this box out.
+
 
 
 ## FP.2 Compute Lidar-based TTC
 
 First of all, we use Constant Velocity Model to compute TTC.
 
-We will use the following method to avoid outlier Lidar points:  
-1. First, we will sort the Lidar points by x-position.
-2. Then, we will pick top N (N=10) points, to compute the average distance.
-3. Check the first 3 points, if the (average_distance-distance) > 0.1 , don't use this point as nearest point, find the next one.
-
-
 The TTC compute process:
-1. First, we need to find the x-position of object in previous frame: distance_prev_x
-2. Then, we need to find the x-position of object in current frame: distance_curr_x
+1. First, we need to find the x-position of object back in previous frame: distance_prev_x
+2. Then, we need to find the x-position of object back in current frame: distance_curr_x
 3. We compute the distance the object move: distance_x=distance_prev_x - distance_curr_x
 4. We compute the velocity of the object : velocity_x = distance_x / delta_time
-5. We assume the velocity of the object is same, then compute the TTC = distance_curr_X / velocity_x;
+5. We compute the curr_nearest_distance of the object. (use another average statistic method to avoid outlier to the distance computation)
+6. We assume the velocity of the object is same, then compute the TTC = curr_nearest_distance / velocity_x;
 Note: if the relative velocity_x is negative, the TTC should be maximum.
 
+In order to make the system stable, I implmenet two method to avoid ghost points.
+
+One is for velocity computation:
+We will use the following method to avoid outlier Lidar points to the velocity computation:  
+1. First, we will sort the Lidar points by x-position.
+2. Then, we will pick top N (N=200) points.
+3. We will use IQR method (the Q1=1/4 of top N points) to compute the center of the object back.
+4. Finally, we use the average value of Q1-1, Q1, Q1+1 to compute the final value, as the center of object's back.
+
+Another is for nearest distance computation
+We will use the following method to avoid outlier Lidar points to the nearest distance computation:  
+1. First, we will sort the Lidar points by x-position.
+2. Then, we will pick top N (N=200) points.
+3. We will use IQR method (the Q1=1/10 of top N points) as the standard value.
+4. In order to avoid ghost point in near, We will pick top 5 points of the points. If the distance of the point between standard value is more than 5cm, we will remove the point.
 
 ## FP.3 Associate Keypoint Correspondences with Bounding Boxes
 
@@ -35,11 +51,30 @@ Note: if the relative velocity_x is negative, the TTC should be maximum.
         check if the matches.keypoint inside the bounding box
         if inside, add it to the vector
 
+In order to make the system stable, I implment two method to avoid wrong matches.
+
+Method 1st:
     compute the mean of matches euclidean distance.
     loop all the matches inside the vector
         compute the euclidean distance between the matches (previous keypoint and current keypoint)
         if the abs(mean-distance) > threshold (for example. 300)
             then remove this match. Because it's obviously wrong.
+
+Method 2nd:
+    outer loop all the matches in the box
+        get match point pair A
+        inner loop all the matches in the box
+            get match point pair B
+            get the line from A to B
+            compute the ratio of Previous and Current line's length; 
+            restore the ratio
+        compute the average ratio value start from A
+    compute the average ratio value of all points
+
+    loop all the matches in the box
+        if the average ratio start from A - average ratio of all points > threshold
+            remove this match
+
 
 
 ## FP.4 Compute Camera-based TTC
@@ -112,13 +147,14 @@ After checking the log, the reason is mismatch of bounding boxes. The bounding b
 
 ## FP.6 Performance Evaluation 2 _Camera TTC Compute
 
-For Camera-based TTC estimation, i make the test of some combination and list some precise performance in the following table.
-I find the suitable combination is very hard to choose. If we ignore the process time, the SIFT-detector will have good performance. But it will take more than 120ms. It is unacceptable. Since the image come every 100ms, we also have a lot of other job to perform, i think the time used for detector and descriptor must be less than 10ms. So i think only FAST can match our requirement. But FAST TTC estimation performance is not so good. Finally, I choose FAST+BRISK.
+For Camera-based TTC estimation, i make the tests of some combination and list performance frame by frame in the following table.
+If we ignore the process time, the SIFT-detector will have good performance. But it will take more than 120ms. It is unacceptable. 
+Since our job is collision avoid system, it has strong real-time requirement. And the image come every 100ms, we also have a lot of other job to perform, i think the time used for detector and descriptor must be less than 10ms. So i think only FAST can match our requirement.
 
 In the following table, i make the test TTC estimation performance by score (min:1 , max:3). (ignore time used, time-used can be found in mid-term-project)
+By the way, I have compute all the combinations and store the result of them in the build/log/ directory. You will find them in that directory. 
 
-
-|col:detector<br/>row:descriptor | SHITOMASI | FAST | BRISK | ORB | AKAZE | SIFT |
+|col:detector<br/>row:descriptor | SHITOMASI |HARRIS| FAST | BRISK | ORB | AKAZE | SIFT |
 |-|-|-|-|-|-|-|
 BRISK|2|2|2|1|2|3
 BRIEF|2|2|2|1|2|3
@@ -126,6 +162,10 @@ ORB|2|2|2|1|2|_
 FREAK|2|2|1|1|2|2
 AKAZE|_|_|_|_|2|_
 SIFT|2|2|1|1|2|3
+
+
+|row:detector<br/>descriptor<br/>col: frame | 1 | 2| 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11| 12| 13 | 14 | 15 |
+|-|-|-|-|-|-|-|
 
 
 1. I find the performance of camera based TTC estimation is very unstable. Depends on the combinations of detectors and descriptors, the performance change large. I think the reason is : the different detector and descriptor is suitable for different scenario. Maybe in real world, we should implement a lots of combination and test them in each situation. According to the currrent situation, choose the right one.
