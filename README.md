@@ -154,18 +154,11 @@ Since our job is collision avoid system, it has strong real-time requirement. An
 In the following table, i make the test TTC estimation performance by score (min:1 , max:3). (ignore time used, time-used can be found in mid-term-project)
 By the way, I have compute all the combinations and store the result of them in the build/log/ directory. You will find them in that directory. 
 
-|col:detector<br/>row:descriptor | SHITOMASI |HARRIS| FAST | BRISK | ORB | AKAZE | SIFT |
-|-|-|-|-|-|-|-|
-BRISK|2|2|2|1|2|3
-BRIEF|2|2|2|1|2|3
-ORB|2|2|2|1|2|_
-FREAK|2|2|1|1|2|2
-AKAZE|_|_|_|_|2|_
-SIFT|2|2|1|1|2|3
+
 
 
 |row:detector<br/>descriptor<br/>col: frame | 1 | 2| 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11| 12| 13 | 14 | 15 |
-|-|-|-|-|-|-|-|
+|-|-|-|-|-|-|-||-|-|-|-|-|-|-|-|
 
 
 1. I find the performance of camera based TTC estimation is very unstable. Depends on the combinations of detectors and descriptors, the performance change large. I think the reason is : the different detector and descriptor is suitable for different scenario. Maybe in real world, we should implement a lots of combination and test them in each situation. According to the currrent situation, choose the right one.
