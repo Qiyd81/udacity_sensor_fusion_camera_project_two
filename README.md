@@ -158,8 +158,8 @@ By the way, I have compute all the combinations and store the result of them in 
 
 
 |row:detector<br/>descriptor<br/>col: frame | 1 | 2| 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11| 12| 13 | 14 | 15 |
-|-|-|-|-|-|-|-||-|-|-|-|-|-|-|-|
-
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+123
 
 1. I find the performance of camera based TTC estimation is very unstable. Depends on the combinations of detectors and descriptors, the performance change large. I think the reason is : the different detector and descriptor is suitable for different scenario. Maybe in real world, we should implement a lots of combination and test them in each situation. According to the currrent situation, choose the right one.
 
