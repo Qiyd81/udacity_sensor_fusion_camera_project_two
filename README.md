@@ -151,17 +151,22 @@ For Camera-based TTC estimation, i make the tests of some combination and list p
 If we ignore the process time, the SIFT-detector will have good performance. But it will take more than 120ms. It is unacceptable. 
 Since our job is collision avoid system, it has strong real-time requirement. And the image come every 100ms, we also have a lot of other job to perform, i think the time used for detector and descriptor must be less than 10ms. So i think only FAST can match our requirement.
 
-In the following table, i make the test TTC estimation performance by score (min:1 , max:3). (ignore time used, time-used can be found in mid-term-project)
-By the way, I have compute all the combinations and store the result of them in the build/log/ directory. You will find them in that directory. 
+I have computed all the combinations and store the result of them in the build/log/ directory. You will find them in that directory. 
+In the following table, i have record all the combination and their result in test.
+By the way, I use iamge from 25 to 55, image_step=2. So there is 15 frames in the table.
 
 
-
-
-|row:detector<br/>descriptor<br/>col: frame | 1 | 2| 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11| 12| 13 | 14 | 15 |
+|col:the frame<br/>row:detector<br/>descriptor | 1 | 2| 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11| 12| 13 | 14 | 15 |
+|LIDAR      |7.58|7.05|9.23|6.86 |9.17|6.82|6.70|6.18|6.73|6.11|9.07|10.77|14.58|23.36|NAN|
+|AKAZE+AKAZE|8.88|9.01|9.89|10.44|8.70|7.43|8.76|9.02|7.02|8.50|9.41|12.17|18.67|59.29|-109.05|
 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
-123
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
 
-1. I find the performance of camera based TTC estimation is very unstable. Depends on the combinations of detectors and descriptors, the performance change large. I think the reason is : the different detector and descriptor is suitable for different scenario. Maybe in real world, we should implement a lots of combination and test them in each situation. According to the currrent situation, choose the right one.
+1. I find the performance of camera based TTC estimation is depends on the combinations of detectors and descriptors. I think the reason is : the different detector and descriptor is suitable for different scenarios. Maybe in real world, we should implement a lots of combination and test them in each situation. According to the currrent situation, choose the right one.
 
 2. For one combination of the detector and descriptors, the TTC estimation may also change very fast from time to time. I think it may caused by the lightness/intensity change, or the object change in image (scale/rotation/affine transformation).
 
