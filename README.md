@@ -157,9 +157,10 @@ By the way, I use iamge from 25 to 55, image_step=2. So there is 15 frames in th
 
 
 |col:the frame<br/>row:detector<br/>descriptor | 1 | 2| 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11| 12| 13 | 14 | 15 |
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
 |LIDAR      |7.58|7.05|9.23|6.86 |9.17|6.82|6.70|6.18|6.73|6.11|9.07|10.77|14.58|23.36|NAN|
 |AKAZE+AKAZE|8.88|9.01|9.89|10.44|8.70|7.43|8.76|9.02|7.02|8.50|9.41|12.17|18.67|59.29|-109.05|
-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+
 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
@@ -168,9 +169,9 @@ By the way, I use iamge from 25 to 55, image_step=2. So there is 15 frames in th
 
 1. I find the performance of camera based TTC estimation is depends on the combinations of detectors and descriptors. I think the reason is : the different detector and descriptor is suitable for different scenarios. Maybe in real world, we should implement a lots of combination and test them in each situation. According to the currrent situation, choose the right one.
 
-2. For one combination of the detector and descriptors, the TTC estimation may also change very fast from time to time. I think it may caused by the lightness/intensity change, or the object change in image (scale/rotation/affine transformation).
+2. For one combination of the detector and descriptors, the TTC estimation may be change not stable from time to time. I think it may caused by the lightness/intensity change, or the object change in image (scale/rotation/affine transformation).
 
-3. For camera TTC estimation, it can only compute the relative change in image. It can not measure the distance of the object. The TTC computation result is not stable.
+3. For camera TTC estimation, it can only compute the relative change in image. It can not measure the distance of the object. The TTC computation result is not precise.
 Especially when the image change very fast, the TTC computation is not stable.
 The reason maybe the matching between two images is hard, when the image change a lot. So the estimation is not good.
 
